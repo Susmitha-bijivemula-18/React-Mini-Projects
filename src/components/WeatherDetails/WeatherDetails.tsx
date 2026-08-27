@@ -1,6 +1,5 @@
-import { Droplets, Wind, Compass, Thermometer, Gauge, Eye, Sun, Umbrella, Sunrise, Sunset } from 'lucide-react';
+import { Droplets, Wind, Thermometer, Gauge, Eye, Sun, Sunrise, Sunset } from 'lucide-react';
 import { useWeatherStore } from '../../store/useWeatherStore';
-import { format } from 'date-fns';
 
 export const WeatherDetails = () => {
   const { weatherData, units } = useWeatherStore();

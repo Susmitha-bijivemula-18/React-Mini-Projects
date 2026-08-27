@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { WeatherData, Location, ForecastHour, ForecastDay, WeatherCondition } from '../types/weather';
+import type { WeatherData, Location, DailyForecast } from '../types/weather';
 
 const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 const BASE_URL = 'https://api.openweathermap.org/data/2.5';
@@ -9,7 +9,7 @@ const GEO_URL = 'https://api.openweathermap.org/geo/1.0';
 const mapIcon = (icon: string) => `//openweathermap.org/img/wn/${icon}@4x.png`;
 
 // Helper to map OWM weather condition
-const mapCondition = (weather: any): WeatherCondition => ({
+const mapCondition = (weather: any): { text: string; icon: string; code: number; } => ({
   text: weather[0].description.charAt(0).toUpperCase() + weather[0].description.slice(1),
   icon: mapIcon(weather[0].icon),
   code: weather[0].id,
@@ -62,7 +62,7 @@ export const fetchWeather = async (lat: number, lon: number, locationInfo?: Part
       dailyMap.get(dateStr)!.push(item);
     });
 
-    const forecastDays: ForecastDay[] = Array.from(dailyMap.entries()).map(([date, hours]) => {
+    const forecastDays: DailyForecast[] = Array.from(dailyMap.entries()).map(([date, hours]) => {
       // Find max and min temp for the day
       const maxTemp = Math.max(...hours.map(h => h.main.temp_max));
       const minTemp = Math.min(...hours.map(h => h.main.temp_min));
@@ -85,12 +85,20 @@ export const fetchWeather = async (lat: number, lon: number, locationInfo?: Part
           avgtemp_f: (((maxTemp + minTemp) / 2) * 9/5) + 32,
           condition: mapCondition(midDayHour.weather),
           daily_chance_of_rain: Math.round(avgPop * 100),
-          uv: 0, // Not available in free 5-day OWM
+          uv: 0,
+          maxwind_kph: 0,
+          totalprecip_mm: 0,
+          avgvis_km: 10,
+          avghumidity: 50,
+          daily_chance_of_snow: 0,
         },
         astro: {
           sunrise: new Date((currentData.sys.sunrise + currentData.timezone) * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           sunset: new Date((currentData.sys.sunset + currentData.timezone) * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          moon_phase: 'Waxing Gibbous', // Dummy, not in OWM free
+          moonrise: '',
+          moonset: '',
+          moon_phase: 'Waxing Gibbous',
+          moon_illumination: 0,
         },
         hour: hours.map(h => ({
           time_epoch: h.dt,
@@ -99,6 +107,7 @@ export const fetchWeather = async (lat: number, lon: number, locationInfo?: Part
           temp_f: (h.main.temp * 9/5) + 32,
           condition: mapCondition(h.weather),
           chance_of_rain: Math.round((h.pop || 0) * 100),
+          chance_of_snow: 0,
         })),
       };
     });
@@ -113,6 +122,7 @@ export const fetchWeather = async (lat: number, lon: number, locationInfo?: Part
         country: locData.country || currentData.sys.country,
         lat,
         lon,
+        timezone: locData.timezone || currentData.timezone || '',
         localtime: localDate,
       },
       current: {
@@ -137,6 +147,7 @@ export const fetchWeather = async (lat: number, lon: number, locationInfo?: Part
           no2: aqiComponents.no2,
           so2: aqiComponents.so2,
           co: aqiComponents.co,
+          'gb-defra-index': aqiData.main.aqi,
         }
       },
       forecast: {

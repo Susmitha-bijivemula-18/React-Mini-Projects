@@ -38,7 +38,7 @@ export const WeatherAlerts = () => {
 
   return (
     <div className="flex flex-col gap-3">
-      {alerts.map((alert, idx) => (
+      {alerts.map((alert: any, idx: number) => (
         <div 
           key={idx} 
           className={`glass-panel flex items-start gap-4 p-4 border rounded-2xl backdrop-blur-md transition-all hover:scale-[1.01] ${getAlertStyle(alert.severity)}`}

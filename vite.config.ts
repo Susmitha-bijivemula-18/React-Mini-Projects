@@ -4,6 +4,6 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/React Mini Projects/",
+  base: "/React Mini Projects/Weather App",
   plugins: [react(), tailwindcss()],
 })

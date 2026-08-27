@@ -17,7 +17,7 @@ export const WeeklyForecast = () => {
       </h3>
       
       <div className="flex flex-col gap-3">
-        {forecastDays.map((day, index) => {
+        {forecastDays.map((day: any) => {
           const date = new Date(day.date);
           const isCurrentDay = isToday(date);
           const dayName = isCurrentDay ? 'Today' : format(date, 'EEEE');

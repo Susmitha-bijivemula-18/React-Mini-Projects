@@ -10,7 +10,7 @@ export const HourlyForecast = () => {
 
   const currentEpoch = new Date().getTime() / 1000;
   const hourlyData = weather.forecast.forecastday[0].hour.filter(
-    (hour) => hour.time_epoch >= currentEpoch
+    (hour: any) => hour.time_epoch >= currentEpoch
   ).slice(0, 24);
 
   return (
@@ -21,7 +21,7 @@ export const HourlyForecast = () => {
       </h3>
       
       <div className="flex overflow-x-auto hide-scrollbar gap-4 pb-2 snap-x">
-        {hourlyData.map((hour, index) => {
+        {hourlyData.map((hour: any, index: number) => {
           const date = new Date(hour.time);
           const timeLabel = index === 0 ? 'Now' : format(date, 'h a');
           const temp = units === 'metric' ? Math.round(hour.temp_c) : Math.round(hour.temp_f);

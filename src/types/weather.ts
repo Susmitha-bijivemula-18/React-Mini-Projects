@@ -6,6 +6,7 @@ export interface Location {
   lat: number;
   lon: number;
   timezone: string;
+  localtime?: string;
 }
 
 export interface CurrentWeather {
